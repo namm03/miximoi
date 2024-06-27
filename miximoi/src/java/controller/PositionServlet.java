@@ -11,7 +11,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.Department;
-import model.position;
+import model.Position;
 
 @WebServlet("/PositionServlet")
 public class PositionServlet extends HttpServlet {
@@ -55,12 +55,12 @@ public class PositionServlet extends HttpServlet {
     }
 
     private void listPositions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<position> positionList = new ArrayList<>();
+        List<Position> positionList = new ArrayList<>();
         String query = "SELECT * FROM position";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                position position = new position();
+                Position position = new Position();
                 position.setPositionID(rs.getInt("positionID"));
                 position.setDepartmentID(rs.getInt("departmentID"));
                 position.setPositionName(rs.getString("positionName"));
@@ -82,7 +82,7 @@ public class PositionServlet extends HttpServlet {
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int positionID = Integer.parseInt(request.getParameter("positionID"));
-        position position = getPositionById(positionID);
+        Position position = getPositionById(positionID);
         List<Department> departmentList = getDepartments();
         request.setAttribute("position", position);
         request.setAttribute("departmentList", departmentList);
@@ -140,13 +140,13 @@ public class PositionServlet extends HttpServlet {
 
     private void searchPositions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String positionName = request.getParameter("positionName");
-        List<position> positionList = new ArrayList<>();
+        List<Position> positionList = new ArrayList<>();
         String query = "SELECT * FROM position WHERE positionName LIKE ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, "%" + positionName + "%");
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    position position = new position();
+                    Position position = new Position();
                     position.setPositionID(rs.getInt("positionID"));
                     position.setDepartmentID(rs.getInt("departmentID"));
                     position.setPositionName(rs.getString("positionName"));
@@ -161,13 +161,13 @@ public class PositionServlet extends HttpServlet {
         request.getRequestDispatcher("position.jsp").forward(request, response);
     }
 
-    private position getPositionById(int positionID) {
+    private Position getPositionById(int positionID) {
         String query = "SELECT * FROM position WHERE positionID = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, positionID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    position position = new position();
+                    Position position = new Position();
                     position.setPositionID(rs.getInt("positionID"));
                     position.setDepartmentID(rs.getInt("departmentID"));
                     position.setPositionName(rs.getString("positionName"));
@@ -198,6 +198,7 @@ public class PositionServlet extends HttpServlet {
         return departmentList;
     }
 
+    
     @Override
     public void destroy() {
         try {

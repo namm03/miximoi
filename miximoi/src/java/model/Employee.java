@@ -1,6 +1,7 @@
 package model;
-
-import java.util.Date;
+import model.Department;
+import model.Position;
+import model.Salary;
 
 /**
  *
@@ -15,6 +16,24 @@ public class Employee {
     private int sdt;
     private String email;
     private String diachi;
+    private Department department;
+    private Position position;
+    private Salary salary;
+
+    public Employee(int employeeID, int positionID, String hoten, String ngaysinh, String gioitinh, int sdt, String email, String diachi, Department department, Position position, Salary salary) {
+        this.employeeID = employeeID;
+        this.positionID = positionID;
+        this.hoten = hoten;
+        this.ngaysinh = ngaysinh;
+        this.gioitinh = gioitinh;
+        this.sdt = sdt;
+        this.email = email;
+        this.diachi = diachi;
+        this.department = department;
+        this.position = position;
+        this.salary = salary;
+    }
+    
     
     public Employee(){}
 
@@ -92,5 +111,30 @@ public class Employee {
     public void setDiachi(String diachi) {
         this.diachi = diachi;
     }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
+    public Salary getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Salary salary) {
+        this.salary = salary;
+    }
+
 
 }

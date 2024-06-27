@@ -1,93 +1,121 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Employee Form</title>
+    <title>Nhân viên</title>
     <style>
         .form-container {
-            max-width: 600px;
-            margin: auto;
+            width: 100%;
+            margin: 0 auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #f2f2f2;
+            background-color: white;
+            text-align: center;
         }
-        .form-container label {
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: inline-block;
+            width: 120px;
             font-weight: bold;
         }
-        .form-container input[type=text], 
-        .form-container input[type=date], 
-        .form-container input[type=number], 
-        .form-container input[type=email], 
-        .form-container select {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0 15px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
+        .form-group input, .form-group select {
+            width: 300px;
+            padding: 5px;
+            font-size: 16px;
         }
-        .form-container input[type=submit], 
-        .form-container input[type=reset] {
-            background-color: #4CAF50;
+        .form-group button {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #007bff;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            float: right;
+            border-radius: 5px;
         }
-        .form-container input[type=submit]:hover, 
-        .form-container input[type=reset]:hover {
-            background-color: #45a049;
+        .form-group button:hover {
+            background-color: #0056b3;
         }
-        .form-container .cancel-btn {
-            background-color: #f44336;
+        .form-group a {
+            text-decoration: none;
+            padding: 8px 20px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 5px;
+            margin-left: 10px;
         }
-        .form-container .cancel-btn:hover {
-            background-color: #da190b;
+        .form-group a:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
 <body>
+    <%@ include file="header.jsp" %>
+    
     <div class="form-container">
-        <h2>Employee Form</h2>
+        <h2>${empty employee ? 'Thêm nhân viên' : 'Cập nhật nhân viên'}</h2>
+        
         <form action="EmployeeServlet" method="post">
-            <input type="hidden" name="action" value="${action}">
-            <input type="hidden" name="employeeID" value="${employee.employeeID}">
-            <label for="departmentID">Department ID:</label>
-            <input type="number" id="departmentID" name="departmentID" value="${employee.departmentID}" required>
-            <br>
-            <label for="hoten">Full Name:</label>
-            <input type="text" id="hoten" name="hoten" value="${employee.hoten}" required>
-            <br>
-            <label for="ngaysinh">Date of Birth:</label>
-            <input type="date" id="ngaysinh" name="ngaysinh" value="${employee.ngaysinh}" required>
-            <br>
-            <label for="gioitinh">Gender:</label>
-            <select id="gioitinh" name="gioitinh" required>
-                <option value="Male" ${employee.gioitinh == 'Male' ? 'selected' : ''}>Male</option>
-                <option value="Female" ${employee.gioitinh == 'Female' ? 'selected' : ''}>Female</option>
-            </select>
-            <br>
-            <label for="sdt">Phone Number:</label>
-            <input type="text" id="sdt" name="sdt" value="${employee.sdt}" required>
-            <br>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="${employee.email}" required>
-            <br>
-            <label for="diachi">Address:</label>
-            <input type="text" id="diachi" name="diachi" value="${employee.diachi}" required>
-            <br>
-            <br>
-            <input type="submit" value="Save">
-            <input type="reset" value="Reset">
-            <a href="EmployeeServlet">Cancel</a>
+            <input type="hidden" name="action" value="${empty employee ? 'insert' : 'update'}">
+            <c:if test="${not empty employee}">
+                <input type="hidden" name="employeeID" value="${employee.employeeID}">
+            </c:if>
+            <div class="form-group">
+                <label for="hoten">Họ tên:</label>
+                <input type="text" id="hoten" name="hoten" required
+                       value="${empty employee ? '' : employee.hoten}">
+            </div>
+            <div class="form-group">
+                <label for="ngaysinh">Ngày sinh:</label>
+                <input type="date" id="ngaysinh" name="ngaysinh" required
+                       value="${empty employee ? '' : employee.ngaysinh}">
+            </div>
+            <div class="form-group">
+                <label for="gioitinh">Giới tính:</label>
+                <select id="gioitinh" name="gioitinh" required>
+                    <option value="Nam" ${employee.gioitinh == 'Nam' ? 'selected' : ''}>Nam</option>
+                    <option value="Nữ" ${employee.gioitinh == 'Nữ' ? 'selected' : ''}>Nữ</option>
+                    <option value="Khác" ${employee.gioitinh == 'Khác' ? 'selected' : ''}>Khác</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sdt">Số điện thoại:</label>
+                <input type="text" id="sdt" name="sdt" required
+                       value="${empty employee ? '' : employee.sdt}">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required
+                       value="${empty employee ? '' : employee.email}">
+            </div>
+            <div class="form-group">
+                <label for="diachi">Địa chỉ:</label>
+                <input type="text" id="diachi" name="diachi" required
+                       value="${empty employee ? '' : employee.diachi}">
+            </div>  
+            <div class="form-group">
+                <label for="positionID">Chức vụ:</label>
+                <select id="positionID" name="positionID" required>
+                    <c:forEach var="position" items="${positionList}">
+                        <option value="${position.positionID}"
+                            ${not empty employee && employee.positionID == position.positionID ? 'selected' : ''}>
+                            ${position.positionName}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">${empty employee ? 'Thêm' : 'Cập nhật'}</button>
+                <a href="EmployeeServlet?action=list">Hủy</a>
+            </div>
         </form>
     </div>
+
+    <%@ include file="footer.jsp" %>
 </body>
 </html>

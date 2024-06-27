@@ -57,6 +57,11 @@
             font-size: 18px;
             margin-top: 10px;
         }
+        .error {
+        color: red;
+        font-weight: bold;
+        margin-top: 10px;
+    }
     </style>
 </head>
 <body>
@@ -110,6 +115,15 @@
                 <a href="SalaryServlet?action=list">Hủy</a>
             </div>
         </form>
+        <% 
+            String error = (String) request.getAttribute("error");
+            if (error != null) {
+        %>
+        <div class="error"><%= error %></div>
+        <% 
+            }
+        %>
+
     </div>
 
     <%@ include file="footer.jsp" %>

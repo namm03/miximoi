@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import model.salary;
+import model.Salary;
 
 @WebServlet("/SalaryServlet")
 public class SalaryServlet extends HttpServlet {
@@ -70,19 +70,19 @@ public class SalaryServlet extends HttpServlet {
     }
 
     private void listSalaries(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<salary> salaryList = new ArrayList<>();
+        List<Salary> salaryList = new ArrayList<>();
         String query = "SELECT * FROM salary";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                salary salary = new salary();
+                Salary salary = new Salary();
                 salary.setEmployeeID(rs.getInt("employeeID"));
                 salary.setLuongcoban(rs.getDouble("luongcoban"));
                 salary.setHeso(rs.getInt("heso"));
                 salary.setPhucap(rs.getDouble("phucap"));
                 salary.setThuong(rs.getDouble("thuong"));
                 salary.setPhat(rs.getDouble("phat"));
-                salary.setLuong(rs.getDouble("luong")); // Set the total salary field
+                salary.setLuong(rs.getDouble("luong")); // Set the total Salary field
                 salaryList.add(salary);
             }
         } catch (SQLException e) {
@@ -98,64 +98,80 @@ public class SalaryServlet extends HttpServlet {
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int employeeID = Integer.parseInt(request.getParameter("employeeID"));
-        salary salary = getSalaryById(employeeID);
+        Salary salary = getSalaryById(employeeID);
         request.setAttribute("salary", salary);
         request.getRequestDispatcher("salary-form.jsp").forward(request, response);
     }
 
     private void insertSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int employeeID = Integer.parseInt(request.getParameter("employeeID"));
-        Double luongcoban = Double.parseDouble(request.getParameter("luongcoban"));
-        int heso = Integer.parseInt(request.getParameter("heso"));
-        Double phucap = Double.parseDouble(request.getParameter("phucap"));
-        Double thuong = Double.parseDouble(request.getParameter("thuong"));
-        Double phat = Double.parseDouble(request.getParameter("phat"));
+    int employeeID = Integer.parseInt(request.getParameter("employeeID"));
+    Double luongcoban = Double.parseDouble(request.getParameter("luongcoban"));
+    int heso = Integer.parseInt(request.getParameter("heso"));
+    Double phucap = Double.parseDouble(request.getParameter("phucap"));
+    Double thuong = Double.parseDouble(request.getParameter("thuong"));
+    Double phat = Double.parseDouble(request.getParameter("phat"));
 
-        // Calculate total salary
-        Double luong = luongcoban * heso + phucap + thuong - phat;
-
-        String query = "INSERT INTO salary (employeeID, luongcoban, heso, phucap, thuong, phat, luong) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setInt(1, employeeID);
-            pstmt.setDouble(2, luongcoban);
-            pstmt.setInt(3, heso);
-            pstmt.setDouble(4, phucap);
-            pstmt.setDouble(5, thuong);
-            pstmt.setDouble(6, phat);
-            pstmt.setDouble(7, luong);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        response.sendRedirect("SalaryServlet?action=list");
+    // Check if employee exists
+    if (!doesEmployeeExist(employeeID)) {
+        request.setAttribute("error", "Employee ID " + employeeID + " does not exist.");
+        request.getRequestDispatcher("salary-form.jsp").forward(request, response);
+        return;
     }
+
+    // Calculate total Salary
+    Double luong = luongcoban * heso + phucap + thuong - phat;
+
+    String query = "INSERT INTO salary (employeeID, luongcoban, heso, phucap, thuong, phat, luong) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+        pstmt.setInt(1, employeeID);
+        pstmt.setDouble(2, luongcoban);
+        pstmt.setInt(3, heso);
+        pstmt.setDouble(4, phucap);
+        pstmt.setDouble(5, thuong);
+        pstmt.setDouble(6, phat);
+        pstmt.setDouble(7, luong);
+        pstmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    response.sendRedirect("SalaryServlet?action=list");
+    }
+
 
     private void updateSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int employeeID = Integer.parseInt(request.getParameter("employeeID"));
-        Double luongcoban = Double.parseDouble(request.getParameter("luongcoban"));
-        int heso = Integer.parseInt(request.getParameter("heso"));
-        Double phucap = Double.parseDouble(request.getParameter("phucap"));
-        Double thuong = Double.parseDouble(request.getParameter("thuong"));
-        Double phat = Double.parseDouble(request.getParameter("phat"));
+    int employeeID = Integer.parseInt(request.getParameter("employeeID"));
+    Double luongcoban = Double.parseDouble(request.getParameter("luongcoban"));
+    int heso = Integer.parseInt(request.getParameter("heso"));
+    Double phucap = Double.parseDouble(request.getParameter("phucap"));
+    Double thuong = Double.parseDouble(request.getParameter("thuong"));
+    Double phat = Double.parseDouble(request.getParameter("phat"));
 
-        // Calculate total salary
-        Double luong = luongcoban * heso + phucap + thuong - phat;
-
-        String query = "UPDATE salary SET luongcoban=?, heso=?, phucap=?, thuong=?, phat=?, luong=? WHERE employeeID=?";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setDouble(1, luongcoban);
-            pstmt.setInt(2, heso);
-            pstmt.setDouble(3, phucap);
-            pstmt.setDouble(4, thuong);
-            pstmt.setDouble(5, phat);
-            pstmt.setDouble(6, luong);
-            pstmt.setInt(7, employeeID);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        response.sendRedirect("SalaryServlet?action=list");
+    // Check if employee exists
+    if (!doesEmployeeExist(employeeID)) {
+        request.setAttribute("error", "Employee ID " + employeeID + " does not exist.");
+        request.getRequestDispatcher("salary-form.jsp").forward(request, response);
+        return;
     }
+
+    // Calculate total Salary
+    Double luong = luongcoban * heso + phucap + thuong - phat;
+
+    String query = "UPDATE salary SET luongcoban=?, heso=?, phucap=?, thuong=?, phat=?, luong=? WHERE employeeID=?";
+    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+        pstmt.setDouble(1, luongcoban);
+        pstmt.setInt(2, heso);
+        pstmt.setDouble(3, phucap);
+        pstmt.setDouble(4, thuong);
+        pstmt.setDouble(5, phat);
+        pstmt.setDouble(6, luong);
+        pstmt.setInt(7, employeeID);
+        pstmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    response.sendRedirect("SalaryServlet?action=list");
+}
+
 
     private void deleteSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int employeeID = Integer.parseInt(request.getParameter("employeeID"));
@@ -172,7 +188,7 @@ public class SalaryServlet extends HttpServlet {
 
     private void searchSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String employeeIDParam = request.getParameter("employeeID");
-        List<salary> salaryList = new ArrayList<>();
+        List<Salary> salaryList = new ArrayList<>();
         String query;
         PreparedStatement pstmt = null;
 
@@ -189,14 +205,14 @@ public class SalaryServlet extends HttpServlet {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    salary salary = new salary();
+                    Salary salary = new Salary();
                     salary.setEmployeeID(rs.getInt("employeeID"));
                     salary.setLuongcoban(rs.getDouble("luongcoban"));
                     salary.setHeso(rs.getInt("heso"));
                     salary.setPhucap(rs.getDouble("phucap"));
                     salary.setThuong(rs.getDouble("thuong"));
                     salary.setPhat(rs.getDouble("phat"));
-                    salary.setLuong(rs.getDouble("luong")); // Set the total salary field
+                    salary.setLuong(rs.getDouble("luong")); // Set the total Salary field
                     salaryList.add(salary);
                 }
             }
@@ -216,20 +232,20 @@ public class SalaryServlet extends HttpServlet {
         request.getRequestDispatcher("salary.jsp").forward(request, response);
     }
 
-    private salary getSalaryById(int employeeID) {
+    private Salary getSalaryById(int employeeID) {
         String query = "SELECT * FROM salary WHERE employeeID=?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, employeeID);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    salary salary = new salary();
+                    Salary salary = new Salary();
                     salary.setEmployeeID(rs.getInt("employeeID"));
                     salary.setLuongcoban(rs.getDouble("luongcoban"));
                     salary.setHeso(rs.getInt("heso"));
                     salary.setPhucap(rs.getDouble("phucap"));
                     salary.setThuong(rs.getDouble("thuong"));
                     salary.setPhat(rs.getDouble("phat"));
-                    salary.setLuong(rs.getDouble("luong")); // Set the total salary field
+                    salary.setLuong(rs.getDouble("luong")); // Set the total Salary field
                     return salary;
                 }
             }
@@ -239,6 +255,18 @@ public class SalaryServlet extends HttpServlet {
         return null;
     }
 
+    private boolean doesEmployeeExist(int employeeID) {
+    String query = "SELECT 1 FROM employee WHERE employeeID = ?";
+    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+        pstmt.setInt(1, employeeID);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            return rs.next();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+    }
     @Override
     public void destroy() {
         try {

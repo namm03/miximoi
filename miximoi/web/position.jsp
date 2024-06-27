@@ -123,9 +123,9 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Mã chức vụ</th>
                     <th>Tên chức vụ</th>
-                    <th>ID phòng ban</th>
+                    <th>Mã phòng ban</th>
                     <th>Hệ số lương</th>
                     <th>Thao tác</th>
                 </tr>

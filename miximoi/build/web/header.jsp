@@ -57,7 +57,7 @@
             <li><a href="DepartmentServlet?action=list">Quản lý Phòng ban</a></li>
             <li><a href="PositionServlet?action=list">Quản lý Chức vụ</a></li>
             <li><a href="SalaryServlet?action=list">Quản lý Lương</a></li>
-            <li><a href="report.jsp">Thống kê, báo cáo</a></li>
+            <li><a href="ReportServlet?action=list">Thống kê, báo cáo</a></li>
             <li><a href="login.jsp">Đăng xuất</a></li>
         </ul>
     </nav>

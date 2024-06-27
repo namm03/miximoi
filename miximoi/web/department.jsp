@@ -123,7 +123,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Mã phòng ban</th>
                     <th>Tên phòng ban</th>
                     <th>Thao tác</th>
                 </tr>

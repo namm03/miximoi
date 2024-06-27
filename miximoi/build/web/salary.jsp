@@ -116,20 +116,20 @@
         </div>
         
         <div class="add-button">
-            <a href="SalaryServlet?action=new">Thêm chức vụ</a>
+            <a href="SalaryServlet?action=new">Thêm lương</a>
         </div>
         
         <table>
             <thead>
                 <tr>
-                    <th>Employee ID</th>
+                    <th>Mã nhân viên</th>
                     <th>Lương cơ bản</th>
                     <th>Hệ số</th>
                     <th>Phụ cấp</th>
                     <th>Thưởng</th>
                     <th>Phạt</th>
                     <th>Lương</th>
-                    <th>Actions</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
